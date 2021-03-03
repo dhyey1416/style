@@ -51,8 +51,7 @@ FROM ${BASE_IMAGE} AS runtime-image
 
 ENV PYTHONUNBUFFERED TRUE
 
-RUN --mount=type=cache,target=/var/cache/apt \
-    apt-get update && \
+RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
     python3 \
     python3-distutils \
