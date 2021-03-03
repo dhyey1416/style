@@ -1,12 +1,10 @@
-# syntax = docker/dockerfile:experimental
 ARG BASE_IMAGE=ubuntu:18.04
 
 FROM ${BASE_IMAGE} AS compile-image
 ARG BASE_IMAGE=ubuntu:18.04
 ENV PYTHONUNBUFFERED TRUE
 
-RUN --mount=type=cache,id=apt-dev,target=/var/cache/apt \
-    apt-get update && \
+RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
     ca-certificates \
     g++ \
@@ -80,7 +78,7 @@ COPY config.properties /home/model-server/config.properties
 RUN mkdir /home/model-server/model-store && chown -R model-server /home/model-server/model-store
 COPY styletransfer.mar /home/model-server/model-store/styletransfer.mar
 
-EXPOSE 8080 8081 8082 7070 7071
+# EXPOSE 8080 8081 8082 7070 7071
 
 USER model-server
 WORKDIR /home/model-server
