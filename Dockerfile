@@ -1,3 +1,4 @@
+# syntax = docker/dockerfile:experimental
 ARG BASE_IMAGE=ubuntu:18.04
 
 FROM ${BASE_IMAGE} AS compile-image
@@ -34,16 +35,16 @@ ARG CUDA_VERSION=""
 RUN TORCH_VER=$(curl --silent --location https://pypi.org/pypi/torch/json | python -c "import sys, json, pkg_resources; releases = json.load(sys.stdin)['releases']; print(sorted(releases, key=pkg_resources.parse_version)[-1])") && \
     TORCH_VISION_VER=$(curl --silent --location https://pypi.org/pypi/torchvision/json | python -c "import sys, json, pkg_resources; releases = json.load(sys.stdin)['releases']; print(sorted(releases, key=pkg_resources.parse_version)[-1])") && \
     if echo "$BASE_IMAGE" | grep -q "cuda:"; then \
-        # Install CUDA version specific binary when CUDA version is specified as a build arg
-        if [ "$CUDA_VERSION" ]; then \
-            pip install --no-cache-dir torch==$TORCH_VER+$CUDA_VERSION torchvision==$TORCH_VISION_VER+$CUDA_VERSION -f https://download.pytorch.org/whl/torch_stable.html; \
-        # Install the binary with the latest CUDA version support
-        else \
-            pip install --no-cache-dir torch torchvision; \
-        fi \
+    # Install CUDA version specific binary when CUDA version is specified as a build arg
+    if [ "$CUDA_VERSION" ]; then \
+    pip install --no-cache-dir torch==$TORCH_VER+$CUDA_VERSION torchvision==$TORCH_VISION_VER+$CUDA_VERSION -f https://download.pytorch.org/whl/torch_stable.html; \
+    # Install the binary with the latest CUDA version support
+    else \
+    pip install --no-cache-dir torch torchvision; \
+    fi \
     # Install the CPU binary
     else \
-        pip install --no-cache-dir torch==$TORCH_VER+cpu torchvision==$TORCH_VISION_VER+cpu -f https://download.pytorch.org/whl/torch_stable.html; \
+    pip install --no-cache-dir torch==$TORCH_VER+cpu torchvision==$TORCH_VISION_VER+cpu -f https://download.pytorch.org/whl/torch_stable.html; \
     fi
 RUN pip install --no-cache-dir captum torchtext torchserve torch-model-archiver
 
@@ -84,5 +85,8 @@ EXPOSE 8080 8081 8082 7070 7071
 USER model-server
 WORKDIR /home/model-server
 ENV TEMP=/home/model-server/tmp
+
+RUN export TS_INFERENCE_ADDRESS="http://127.0.0.1:$PORT"
+
 CMD ["/usr/local/bin/dockerd-entrypoint.sh"]
 CMD ["serve"]
