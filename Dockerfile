@@ -83,6 +83,6 @@ USER model-server
 WORKDIR /home/model-server
 ENV TEMP=/home/model-server/tmp
 
-CMD export TS_INFERENCE_ADDRESS="http://127.0.0.1:$PORT"
+ENTRYPOINT ["export","TS_INFERENCE_ADDRESS="http://127.0.0.1:$PORT""]
 
 CMD ["/usr/local/bin/dockerd-entrypoint.sh"]
