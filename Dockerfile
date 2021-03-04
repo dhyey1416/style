@@ -86,4 +86,3 @@ ENV TEMP=/home/model-server/tmp
 RUN export TS_INFERENCE_ADDRESS="http://127.0.0.1:$PORT"
 
 CMD ["/usr/local/bin/dockerd-entrypoint.sh"]
-CMD ["serve"]
