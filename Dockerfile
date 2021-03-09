@@ -77,7 +77,7 @@ COPY config.properties /home/model-server/config.properties
 RUN mkdir /home/model-server/model-store && chown -R model-server /home/model-server/model-store
 COPY styletransfer.mar /home/model-server/model-store/styletransfer.mar
 
-# EXPOSE 8080 8081 8082 7070 7071
+EXPOSE $PORT
 
 USER model-server
 WORKDIR /home/model-server
